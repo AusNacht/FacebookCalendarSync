@@ -24,7 +24,7 @@ public class MainActivity extends Activity {
 		 *  
 		 * createEvent("James Kobayashi", "2013-07-20");
 		 * 
-		 * This is create an event on all calendars
+		 * This is to create a single event on all calendars
 		 *  titled: "James Kobayashi's Birthday"
 		 *  date: July 20th 2013 
 		 *  
@@ -32,7 +32,6 @@ public class MainActivity extends Activity {
 		 * 1) The event will re-occur yearly, you can see
 		 * 2) Using a calendar widget that syncs multiple calendars will display multiple birthdays
 		 * 3) Currently, no duplicates are being sighted fortunately for a single calendar
-		 * 4) There will be duplicates if you use one calendar to sync multiple calendars
 		 */
 	}
 	
