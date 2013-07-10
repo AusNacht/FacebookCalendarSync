@@ -5,16 +5,13 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.CalendarContract;
-import android.provider.CalendarContract.Events;
 import android.view.Menu;
-import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -23,9 +20,8 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		
-		 
 		/* To create an event on the user's calendar(s), call the following:
-		 * 
+		 *  
 		 * createEvent("James Kobayashi", "2013-07-20");
 		 * 
 		 * This is create an event on all calendars
