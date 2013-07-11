@@ -4,5 +4,8 @@
     <string name="app_name">FacebookCalendarSync</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="submit">Submit</string>
+    <string name="login">Login/Logout</string>
+    <string name="appId">477093129051480</string>
 
 </resources>

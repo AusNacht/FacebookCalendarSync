@@ -1,4 +1,5 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,6 +12,36 @@
     <ListView 
         android:id="@+id/listView"
         android:layout_height="match_parent"
-       	android:layout_width="match_parent"/>
+       	android:layout_width="match_parent"
+       	android:layout_above="@+id/Table"/>
+    
+    <TableLayout
+        android:id="@+id/Table"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp" 
+        android:layout_alignParentBottom="true"
+        android:gravity="center">
+        
+   <TableRow>
+   <com.facebook.widget.LoginButton
+        android:id="@+id/login"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login"
+        android:onClick="LoginHandler"
+        android:layout_weight="1"
+        facebook:confirm_logout="false"
+        facebook:fetch_user_info="true" 
+        />
+   <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"      
+        android:text="@string/submit" 
+        android:onClick="SubmitHandler" 
+        android:layout_weight="1"/>
+   
+    </TableRow>
+    </TableLayout>
 
 </RelativeLayout>

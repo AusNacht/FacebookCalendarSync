@@ -7,6 +7,7 @@ import java.util.TimeZone;
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,13 +20,24 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
+
+import com.facebook.*;
+import com.facebook.model.GraphUser;
+import com.facebook.widget.*;
+
 
 public class MainActivity extends Activity {
 
 	ListView listView1;
-
+	private LoginButton loginButton;
+	private GraphUser user;
+	private Button submitbutton;
+	private UiLifecycleHelper uiHelper;
+	private Session session;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -46,6 +58,20 @@ public class MainActivity extends Activity {
 		 * for a single calendar
 		 */
 
+		 loginButton = (LoginButton) findViewById(R.id.login);
+	        loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+	            @Override
+	            public void onUserInfoFetched(GraphUser user) {
+	                MainActivity.this.user = user;
+	                
+	                // It's possible that we were waiting for this.user to be populated in order to post a
+	                // status update.
+	               
+	            }
+	        });
+		
+		
+		
 		// **** Populate this string array with all names! ****
 		// note: a method to loop and add dynamically will be needed
 		String[] listItems = { "I'm on", "the list!" };
@@ -149,4 +175,22 @@ public class MainActivity extends Activity {
 		}
 		mCursor.close();
 	}
+	
+	//Might be used later.
+	/* private void updateUI() {
+	        Session session = Session.getActiveSession();
+	        boolean enableButtons = (session != null && session.isOpened());
+
+	        //submitbutton.setEnabled(enableButtons);
+	      
+	        
+	    }*/
+	 
+	 @Override
+	    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	        super.onActivityResult(requestCode, resultCode, data);
+	        Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+	    }
+	
+	
 }
