@@ -1,6 +1,7 @@
 package edu.fsu.cs.facebookcalendarsync;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.TimeZone;
 
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Reminders;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.View;
@@ -24,6 +26,10 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
 
+import com.facebook.FacebookRequestError;
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
@@ -45,6 +51,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		loginButton = (LoginButton) findViewById(R.id.login);
+		loginButton.setReadPermissions(Arrays.asList("friends_birthday"));
 		loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
 			@Override
 			public void onUserInfoFetched(GraphUser user) {
@@ -185,7 +192,24 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+		
+		String fqlQuery = "SELECT uid, name, birthday_date FROM user WHERE uid IN" + "(SELECT uid2 FROM friends WHERE uid1 = me()";
+		
+		Bundle params = new Bundle();
+		params.putString("q", fqlQuery);
+		
+		session = Session.getActiveSession();
+		Request request = new Request(session, "/fql", params, HttpMethod.GET, new Request.Callback() {
+			@Override
+			public void onCompleted(Response response) {
+				Log.d("Facebook", "here 1");
+				// TODO Auto-generated method stub
+				FacebookRequestError error = response.getError();
+				Log.d("Facebook", "Result: " + error.toString());
+			}
+		});
+		Request.executeBatchAsync(request);
+
 	}
 	
 	/*
