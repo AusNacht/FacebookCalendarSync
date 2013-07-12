@@ -12,11 +12,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.CalendarContract;
-import android.provider.CalendarContract.Instances;
 import android.provider.CalendarContract.Reminders;
-import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -24,9 +24,10 @@ import android.widget.Button;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
 
-import com.facebook.*;
+import com.facebook.Session;
+import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphUser;
-import com.facebook.widget.*;
+import com.facebook.widget.LoginButton;
 
 
 public class MainActivity extends Activity {
@@ -42,39 +43,21 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-
-		/*
-		 * To create an event on the user's calendar(s), call the following:
-		 * 
-		 * createEvent("James Kobayashi", "2013-07-20", 10);
-		 * 
-		 * This is to create a single event on all calendars titled:
-		 * "James Kobayashi's Birthday" date: July 20th 2013 reminder minutes
-		 * before: 10
-		 * 
-		 * Notes: 1) The event will re-occur yearly, you can see 2) Using a
-		 * calendar widget that syncs multiple calendars will display multiple
-		 * birthdays 3) Currently, no duplicates are being sighted fortunately
-		 * for a single calendar
-		 */
-
-		 loginButton = (LoginButton) findViewById(R.id.login);
-	        loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
-	            @Override
-	            public void onUserInfoFetched(GraphUser user) {
-	                MainActivity.this.user = user;
-	                
-	                // It's possible that we were waiting for this.user to be populated in order to post a
-	                // status update.
-	               
-	            }
+		
+		loginButton = (LoginButton) findViewById(R.id.login);
+		loginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+			@Override
+			public void onUserInfoFetched(GraphUser user) {
+				MainActivity.this.user = user;
+				
+				// It's possible that we were waiting for this.user to be populated in order to post a
+				// status update.
+	          	}
 	        });
-		
-		
-		
+
 		// **** Populate this string array with all names! ****
-		// note: a method to loop and add dynamically will be needed
-		String[] listItems = { "I'm on", "the list!" };
+		// note: a method to loop and add "name, date" dynamically will be needed
+		String[] listItems = { "James Kobayashi, 07-19", "Guanyu Tian, 07-20" };
 
 		// Initialize ListView
 		listView1 = (ListView) findViewById(R.id.listView);
@@ -89,14 +72,37 @@ public class MainActivity extends Activity {
 			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
 					long arg3) {
 				CheckedTextView ctv = (CheckedTextView) arg1;
-
-				// Any additional stuff to do onClick goes here
-
-				createEvent("James Kobayashi", "2013-07-20", 10);
 			}
 		});
+		
+		// *** Submit Button ***
+	    submitbutton = (Button) findViewById(R.id.button2);
+	    submitbutton.setOnClickListener(new OnClickListener() {
+	    	public void onClick(View v) {
+	    		
+	    		// Array of checked items and their positions taken
+	    		SparseBooleanArray checkedItems = listView1.getCheckedItemPositions();
+	    	  
+	    		if (checkedItems != null) {
+	    			for (int i = 0; i < checkedItems.size(); i++) {
+	    				if (checkedItems.valueAt(i)) {
+	    					
+	    					// If the item is checked, grab the string
+	    					String friendInfo = listView1.getAdapter()
+	    							.getItem(checkedItems.keyAt(i)).toString();
+	    					
+	    					// Parse the string for name and date
+	    					String[] info = friendInfo.split(",");
+	    				  
+	    					// Enter into calendar (Default 10 minutes)
+	    					createEvent(info[0].trim( ), info[1].trim( ), 10);
+	    				}
+	    			}
+	    		}
+	    	}
+	    });
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -121,7 +127,7 @@ public class MainActivity extends Activity {
 
 			long theDate = 0;
 			try {
-				Date date = new SimpleDateFormat("yyyy-MM-dd").parse(birthday);
+				Date date = new SimpleDateFormat("MM-dd").parse(birthday);
 				theDate = date.getTime();
 			} catch (Exception e) {
 			}
@@ -176,21 +182,18 @@ public class MainActivity extends Activity {
 		mCursor.close();
 	}
 	
-	//Might be used later.
-	/* private void updateUI() {
-	        Session session = Session.getActiveSession();
-	        boolean enableButtons = (session != null && session.isOpened());
-
-	        //submitbutton.setEnabled(enableButtons);
-	      
-	        
-	    }*/
-	 
-	 @Override
-	    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-	        super.onActivityResult(requestCode, resultCode, data);
-	        Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
-	    }
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+	}
 	
-	
+	/*
+	 * Might be used later.
+	 * private void updateUI() {
+	 * Session session = Session.getActiveSession();
+	 * boolean enableButtons = (session != null && session.isOpened());
+	 * //submitbutton.setEnabled(enableButtons);	        
+	 * }
+	 */
 }
