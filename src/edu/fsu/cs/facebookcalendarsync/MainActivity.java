@@ -205,10 +205,10 @@ public class MainActivity extends Activity {
 				Log.d("Facebook", "here 1");
 				// TODO Auto-generated method stub
 				FacebookRequestError error = response.getError();
-				Log.d("Facebook", "Result: " + error.toString());
+				Log.d("Facebook", "Result: " + response.toString());
 			}
 		});
-		Request.executeBatchAsync(request);
+		Request.executeBatchAsync(request); 
 
 	}
 	
